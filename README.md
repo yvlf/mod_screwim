@@ -1,256 +1,170 @@
-PHP Screw Improved(ScrewIm) extension
-==
-[![GitHub license](https://img.shields.io/badge/License-BSD%202--Clause-blue.svg)](https://raw.githubusercontent.com/OOPS-ORG-PHP/mod_screwim/master/LICENSE)
-[![GitHub last release](https://img.shields.io/github/release/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/releases)
-[![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/issues?q=is%3Aissue+is%3Aclosed)
-[![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed-raw/OOPS-ORG-PHP/mod_screwim.svg)](https://github.com/OOPS-ORG-PHP/mod_screwim/pulls?q=is%3Apr+is%3Aclosed)
+PHP螺丝的改进（screwim）扩展
 
-## Abstract
+= =
 
-***PHP Screw Imporved(ScrewIm)*** is a PHP script encryption tool. When you are developing a commercial package using PHP, the script can be distributed as encrypted up until just before execution. This preserves your intellectual property.
+【！【GitHub许可]（https：／／IMG。盾牌。IO /徽章/许可RSD 202条蓝色，SVG）]（https://raw.githubusercontent.com/oops-org-php/mod_screwim/master/license）
 
-This extension is based from [PHP screw](http://www.pm9.com/newpm9/itbiz/php/phpscrew/) who made by [***Kunimasa Noda***](mailto:kuni@pm9.com) in [PM9.com, Inc.](http://www.pm9.com)
+【！【GitHub上发布]（https：／／IMG。盾牌。IO / GitHub /释放/ oops-org-php / mod_screwim。SVG）]（https://github.com/oops-org-php/mod_screwim/releases）
 
-The differences from the original PHP-screw are as follows:
- 1. Improved performance by processing in memory rather than creating temporary files during decoding.
-    1. Applied [Sungwook-Shin's improved patch](https://github.com/edp1096)
-    2. Improved performance by fixing duplicated file open (issue #4)
-    3. Fixed memory leaks.
- 2. Improved performance by changing memory reallocation logic when encoding or decoding large files.
- 3. Only works if 'screwim.enable' option is on.
-    * Improved performance by don't check magic key under normal environment(regular php script).
-    * See also [#3 add screwim.enable ini option issue](https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3)
- 4. Fixed memory leaks.
- 5. Remove global variable. Maybe thread safe.
- 6. Preventing problems that can be decompiled with [php_unscrew](https://github.com/dehydr8/php_unscrew)
- 7. support runtime encrypt function ```screwim_encrypt()```
- 8. support runtime decrypt function ```screwim_decrypt(), screwim_seed()```
- 9. And so on..
+【！[问题]（https：GitHub关闭/ IMG。盾牌。IO / GitHub /问题封闭原/ oops-org-php / mod_screwim。SVG）]（https://github.com/oops-org-php/mod_screwim/issues？Q =为3aissue + % 3aclosed）
 
-## Description
-
-***ScrewIm*** is encipher a PHP script with the encryption tool.
-
-And, at the time of execution of a PHP script, the decryptor screwim.so is executed as PHP-Extension, just before the PHP script is handed to the Zend-Compiler.
-
-In fact what is necessary is just to add the description about php.screw to php.ini. A PHP script programmer does not need to be conscious of decrypting process. Moreover it is possible for you to intermingle an enciphered script file and an unenciphered one.
-
-The encryption logic in the encryption tool(screwim) and the decryption logic in the decryptor(screwim.so), can be customized easily.
-
-The normal purpose code and decryption logic included, can be customized by only changing the encryption SEED key. Although it is easy to cusomize the encryption, by the encryption SEED, it does NOT mean, that the PHP scripts can be decrypted by others easily.
-
-## License
-
-Copyright (c) 2016 JoungKyun.Kim
-
-[BSD 2-clause](LICENSE)
-
-## Requirement
-
-* ***PHP 5*** and after (Also support ***PHP 7***)
-* PHP ***zlib*** extension.  
-  Check that PHP has zlib compiled in it with the PHP script:
-```php
-    <?php gzopen(); ?>
-```
-* Unix like OS.
-
-## Installation
-
-### 1. Customize encrytion / decryption  
-  * ~~change the encryption SEED key (***screwim_mcryptkey***) in ***my_screw.h*** into the values according to what you like.~~
-  * ~~The encryption will be harder to break, if you add more values to the encryption SEED array.~~
-  * ~~However, the size of the SEED is unrelated to the time of the decrypt processing.~~
-  * The encryption SEED key is now automatically generated from 5 to 8 arrays at configure time. Don't use ***my_screw.h*** any more. (craeted with the ***SCREWIM_ENC_DATA*** constant in config.h)
-  * (***Optional***) Encrypted scripts get a stamp added to the beginning of the file. If you like, you may change this stamp defined by ***SCREWIM*** and ***SCREWIM_LEN*** in ***php_screwim.h***. ***SCREWIM_LEN*** must be less than or equal to the size of ***SCREWIM***.
-
-### 2. Build and install  
-  ```bash
-  [root@host mod_screwim]$ phpize
-  [root@host mod_screwim]$ ./configure
-  [root@host mod_screwim]$ make install
-  ```
-On configure, the ***--enable-screwim-decrypt*** option adds decrypt functions(***screwim_decrypt(), screwim_seed()***). This means that ***you can decrypt an encrypted PHP file***.
-
-If you are building ***for distribution***, never add the --enable-screwim-decrypt option!
+【！[拉]（HTTPS请求Github封闭：/ / IMG。盾牌。IO / GitHub /问题/ oops-org-php /公关关原mod_screwim。SVG）]（https://github.com/oops-org-php/mod_screwim/pulls？Q =为3apr + % 3aclosed）
 
 
-### 3. Configuration
-Add next line to php configuration file (php.ini and so on)
 
-```ini
-extension=screwim.so
-screwim.enable = 1
-```
-
-By default, decryption does not work, so the performance of regular PHP files is better than the original PHP Screw. The screwim.enable option must be turned on for decryption to work. See also https://github.com/OOPS-ORG-PHP/mod_screwim/issues/3
-
-For detail on the settings, refer to the ***Execution*** item below.
-
-### 4. APIs
-
-* ***(string) screwim_encrypt (string)***
- * Support runtime encryption.
- * Can be used instead of ***tools/screwim*** command
- * This API is not affected by the ***screwim.enable*** option.
-
-```php
-  <?php
-  $code = <<<EOF
-  <?php
-  $conf['url'] = 'http://domain.com/register';
-  $conf['pass'] = 'blah blah';
-  ?>
-  EOF;
-
-  $data = screwim_encrypt ($code);
-  file_put_contents ('./config/config.php', $data);
-  ?>
-```
-
-* ***(string) screwim_decrypt (string, (optional) key, (optional) magickey_len)***  
- * The ***--enable-screwim-decrypt*** option must be given at build time.
- * Support runtime decryption.
- * Can be used instead of ***tools/screwim*** command
- * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
- * When not running as ***root privileges***, ***E_ERROR*** occurs.
- * This API is not affected by the ***screwim.enable*** option.
-
-```php
-  <?php
-  $config = file_get_contents ('./config/config.php');
-  echo screwim_decrypt ($config);
-  ?>
-```
-
-* ***(object) screwim_seed (void)***
- * The ***--enable-screwim-decrypt*** option must be given at build time.
- * Returns ***encrypt seed key*** of current ***mod_screwim.so***
- * Can be used instead of ***tools/screwim*** command
- * When call in an environment other than ***CLI mode***, ***E_ERROR*** occurs.
- * When not running as ***root privileges***, ***E_ERROR*** occurs.
- * This API is not affected by the ***screwim.enable*** option.
-
-```php
-  <?php
-  // returns follow
-  // stdClass Object
-  // (
-  //     [keybyte] => 6b22886a0f4faa5f37783d36944d7823e707
-  //     [keystr] => 8811, 27272, 20239, 24490, 30775, 13885, 19860, 9080, 2023
-  //     [headerlen] => 14
-  // )
-  print_r (screwim_seed ());
-  ?>
-```
+# #摘要
 
 
-## Command line Encryption Tool
 
-The encription tool is located in ***mod_screwim/tools/***.
+* PHP螺杆改进（screwim）***是一个PHP脚本加密工具。当您使用PHP开发一个商业包时，脚本可以以加密方式分发直到执行前。这保留了你的知识产权。
 
-### 1. Build
+
+
+这个扩展是基于PHP螺杆] [（http://www.pm9.com/newpm9/itbiz/php/phpscrew/）谁由【*** Kunimasa田*** ]（地址：kuni@pm9.com）在[公司]（pm9.com，http://www.pm9.com）
+
+
+
+与原始PHP螺钉的差异如下：
+
+1。通过在内存中处理而不是在解码期间创建临时文件来提高性能。
+
+1。应用[ Sungwook Shin改进补丁]（https://github.com/edp1096）
+
+2。通过固定重复打开文件的性能改进（问题# 4）
+
+三.固定内存泄漏。
+
+2。在编码或解码大文件时通过改变内存重新分配逻辑来提高性能。
+
+三.只有当“启用”选项是screwim。
+
+*在正常环境下不检查魔法键（常规PHP脚本）提高性能。
+
+*参见[ # 3添加screwim.enable INI选项问题]（https://github.com/oops-org-php/mod_screwim/issues/3）
+
+4。固定内存泄漏。
+
+5。删除全局变量。也许线程安全。
+
+6。预防，可以反编译[ php_unscrew ]问题（https://github.com/dehydr8/php_unscrew）
+
+7。支持运行时加密功能` ` ` screwim_encrypt() ` ` `
+
+8。支持运行时解密功能` ` ` screwim_decrypt()，screwim_seed() ` ` `
+
+9。凡此种种，不一而足。
+
+
+
+# #描述
+
+
+
+* * * * * *是screwim加密PHP脚本的加密工具。
+
+
+
+而且，在一个PHP脚本的执行时间，解密screwim.so是PHP扩展执行，就在PHP脚本交给Zend编译器。
+
+
+
+事实上你要做的是只是添加描述php.screw到php.ini。PHP脚本程序员不需要意识到解密过程。而且你将加密脚本文件和未加密的一个可能。
+
+
+
+在加密工具加密逻辑（screwim）和解密的解密逻辑（screwim。所以），可以轻松地定制。
+
+
+
+包含的普通目的代码和解密逻辑可以通过改变加密种子密钥来定制。虽然很容易cusomize加密，通过加密种子，这并不意味着，这个PHP脚本可以解密，容易被别人。
+
+
+
+# #许可
+
+
+
+版权所有（C）2016 joungkyun。基姆
+
+
+
+[ ]（许可证）了2-clause BSD
+
+
+
+需求量
+
+
+
+*** PHP 5 ***和之后（也支持*** PHP 7 ***）
+
+* PHP *** zlib ***延伸。
+
+检查PHP zlib编译它与PHP脚本：
+
+“PHP”
+
+<？PHP gzopen()；？>
+
+` ` `
+
+*类UNIX操作系统。
+
+
+
+# #安装
+
+
+
+# # # 1。自定义加密/解密
+
+* ~ ~更改加密种子密钥（*** screwim_mcryptkey ***）在*** my_screw。h ***的值根据你所喜欢的。~ ~
+
+如果你在加密种子数组中添加更多的值，加密将更加困难。
+
+但是，种子的大小与解密处理的时间无关。
+
+*加密种子密钥现在自动从5到8个数组在配置时生成。不要使用*** my_screw h ***更多。（成就了你这与*** screwim_enc_data ***恒在config. h）
+
+*（***可选***）加密脚本获得一个添加到文件开头的图章。如果你喜欢，你可以改变这枚邮票由*** screwim ***和*** screwim_len *** *** *** php_screwim。H。* * * * * * screwim_len必须小于或等于大小screwim *** ***。
+
+
+
+# # # 2。建造和安装
 
 ```bash
-[root@host mod_screwim]$ cd tools
-[root@host tools]$ ./autogen.sh
-[root@host tools]$ ./configure --prefix=/usr
-[root@host tools]$ make
-[root@host tools]$ make install # Or copy the screwim file into an appropriate directory.
-[root@host tools]$ /usr/bin/screwim -h
-screwim 1.0.1 : encode or decode php file
-Usage: screwim [OPTION] PHP_FILE
-   -c VAL, --convert=VAL convert key byte to digits
-   -d,     --decode   decrypt encrypted php script
-   -h,     --help     this help messages
-   -H VAL, --hlen=VAL length of magic key(SCREWIM_LEN or PM9SCREW_LEN). use with -d mode
-   -k VAL, --key=VAL  key bytes. use with -d mode
-   -v,     --view     print head length and key byte of this file
-[root@host tools]$
-```
 
-### 2. Encryptioin
+[主持人] phpize美元mod_screwim根@
 
-The follow command creates the script file enciphered by the name of ***script file name .screw***.
-```
-   [root@host ~]$ /usr/bin/screwim test.php
-   Success Crypting(test.php.screw)
-   [root@host ~]$
-```
+[主持人]根@ mod_screwim美元。/配置
 
-### 3. Decryption
+[主持人]根@ mod_screwim美元安装
 
-The follow command creates the script file enciphered by the name of ***script file name .discrew***.
-```
-   [root@host ~]$ /usr/bin/screwim -d test.php.screw
-   Success Decrypting(test.php.screw.discrew)
-   [root@host ~]$
-```
+` ` `
 
-## Execution
+在配置、***，使screwim解密***选择加解密功能（*** screwim_decrypt()，screwim_seed() ***）。这意味着***可以对加密的php文件进行解密。
 
-Add next line to php configuration file (php.ini and so on)
 
-```ini
-extension=screwim.so
-```
 
-The decryption does not work by default, when loading module.
+如果你正在建设***分配***，从不添加，使screwim解密选项！
 
-The decryption process is as follows:
-  1. Open the file and verify that the beginning of the file starts with the Magic key. (Check if the file is encrypted with ScrewIm)
-  2. If the file is unencrypted(If the Magic key is missing or different), return to the zend compiler without working.
-  3. Once the Magic key is confirmed, return to zend compile after decoding.
 
-Obviously encryption and decryption will degrade performance. Therefore, it is recommended to reduce the number of encrypted documents as much as possible. However, even if you do not encrypt it, opening all files to check for encryption also causes performance degradation. In particular, a large number of connections can cause serious performance degradation.
 
-To solve this problem, ***mod_screwim*** will return to the Zend compiler without checking the Magic key if the screwim.enable option is not enabled.
 
-***Therefore, it is best to minimize the encryption as much as possible, and it is recommended to include it in php after encrypting only certain functions***.
+# # # 3。配置
 
-Here is how to use the screwim.enable option:
+添加一行（PHP配置文件php.ini等等）
 
-### 1. PHP configuration file
 
-```ini
+
+“ini”
+
+screwim.so延伸=
+
 screwim.enable = 1
-```
 
-Add the above settings to the PHP configuration file(***php.ini*** and so on). It is not recommended because it causes ***performance degradation*** when processing unencrypted php scripts.
+` ` `
 
-Use this setting if there are not many connections or if there is sufficient resources.
 
-In the CLI environment, if you can use the CLI configuration file separately from the apache module or FPM, it is recommended to add the above settings to php.ini.
 
-### 2. mod_php (Apache module) envionment
-
-Use the <directory> block to make the decryptor work on the desired path.
-
-```apache
-<Directory /path>
-    php_falg screwim.enable on
-</Directory>
-```
-
-### 3. PHP Cli environments
-
-use -d option.
-
-```bash
-[root@host ~]$ php -d screwim.enable=1 encrypted.php
-```
-
-In the CLI environment, resource utilization is not high. If the configuration file is separate from the apache module or FPM, it is recommended that you add this option to your PHP configuration file.
-
-### 4. embeded php code (Recommand)
-
-```php
-<?php
-ini_set ('screwim.enable', true);
-require_once 'encrypted.php';
-ini_set ('screwim.enable', false);
-require_once 'normal.php';
-
-blah_blah();
-?>
-```
+默认情况下，解密不起作用，因此常规PHP文件的性能比原始PHP螺钉要好。的screwim.enable选项必须打开解密工作。又见https://github.com/oops-org—
